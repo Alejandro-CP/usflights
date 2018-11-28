@@ -26,14 +26,14 @@ SELECT `Description` AS "Flight Company", COUNT(Cancelled) AS "Cancelled Flights
 FROM usairlineflights.flights 
 LEFT JOIN usairlineflights.carriers 
 ON usairlineflights.flights.UniqueCarrier = usairlineflights.carriers.CarrierCode
-WHERE CancellationCode = 'A' OR CancellationCode = 'NA'
 GROUP BY `Description`
 ORDER BY COUNT(Cancelled) DESC;
 
 -- Sisena consulta
-SELECT FlightID AS "Flight ID" -- , SUM(Distance) AS "Flight Distance (miles)" 
+SELECT TailNum AS "Plane ID" -- , SUM(Distance) AS "Flight Distance (miles)" 
 FROM usairlineflights.flights 
-GROUP BY FlightID
+WHERE TailNum <> "NA"
+GROUP BY TailNum
 ORDER BY SUM(Distance) DESC 
 LIMIT 10;
 
@@ -42,8 +42,6 @@ SELECT `Description` AS "Flight Company", AVG(DepDelay) AS "Average Departure De
 FROM usairlineflights.flights
 LEFT JOIN usairlineflights.carriers
 ON usairlineflights.flights.UniqueCarrier = usairlineflights.carriers.CarrierCode
-WHERE 
-	(SELECT AVG(ArrDelay) FROM usairlineflights.flights
-    WHERE usairlineflights.flights.UniqueCarrier = usairlineflights.carriers.CarrierCode) > 10.0
 GROUP BY `Description`
+HAVING AVG(ArrDelay) > 10.0
 ORDER BY AVG(ArrDelay) DESC;
